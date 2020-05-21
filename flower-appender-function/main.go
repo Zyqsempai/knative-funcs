@@ -17,6 +17,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
@@ -30,7 +31,7 @@ type envConfig struct {
 	Msg     string `envconfig:"PAYLOAD" default:"boring default msg, change me with env[PAYLOAD]"`
 	FncName string `envconfig:"FUNCNAME"`
 	Type    string `envconfig:"TYPE"`
-	Sleep   int    `envconfig:"SLEEP"`
+	Sleep   string `envconfig:"SLEEP"`
 }
 
 var (
@@ -70,8 +71,9 @@ func gotEvent(inputEvent event.Event) (*event.Event, protocol.Result) {
 	}
 
 	// Sleep if it's needed
-	if env.Sleep != 0 {
-		time.Sleep(time.Duration(env.Sleep) * time.Second)
+	if env.Sleep != "" {
+		duration, _ := strconv.Atoi(env.Sleep)
+		time.Sleep(time.Duration(duration) * time.Second)
 	}
 
 	log.Println("Transform the event to: ")
